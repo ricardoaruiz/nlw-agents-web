@@ -1,3 +1,3 @@
 export function App() {
-  return <div>Hello World</div>
+  return <div className="bg-zinc-950 text-white">Hello World</div>
 }
