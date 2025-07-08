@@ -1,14 +1,16 @@
-import { Button } from './components/ui/button'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import { CreateRoomPage } from './pages/create-room'
+import { ListRoomsPage } from './pages/list-rooms'
+import { RoomPage } from './pages/room'
 
 export function App() {
   return (
-    <div>
-      <Button variant="default">Teste</Button>
-      <Button variant="destructive">Teste</Button>
-      <Button variant="ghost">Teste</Button>
-      <Button variant="link">Teste</Button>
-      <Button variant="outline">Teste</Button>
-      <Button variant="secondary">Teste</Button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<CreateRoomPage />} index />
+        <Route element={<ListRoomsPage />} path="rooms" />
+        <Route element={<RoomPage />} path="rooms/:roomId" />
+      </Routes>
+    </BrowserRouter>
   )
 }
