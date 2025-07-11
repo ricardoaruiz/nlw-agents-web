@@ -1,0 +1,18 @@
+import { useQuery } from '@tanstack/react-query'
+import type { GetRoomsResponse } from './types/get-rooms-response'
+
+export const useRooms = ({ delay }: { delay?: number } = {}) => {
+  return useQuery({
+    queryKey: ['get-rooms'],
+    queryFn: async () => {
+      if (delay) {
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
+
+      const response = await fetch('http://localhost:3333/rooms')
+      const rooms: GetRoomsResponse = await response.json()
+      return rooms
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  })
+}
