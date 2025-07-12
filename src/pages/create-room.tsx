@@ -1,4 +1,4 @@
-import { RoomList } from '@/components/room-list'
+import { RoomList } from '@/components/RoomList'
 
 export function CreateRoomPage() {
   return (

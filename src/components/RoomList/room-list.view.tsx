@@ -1,19 +1,17 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
-import { useRooms } from '@/http/use-rooms'
 import { dayjs } from '@/lib/dayjs'
-import { Badge } from './ui/badge'
+import { Badge } from '../ui/badge'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from './ui/card'
+} from '../ui/card'
+import type { RoomListViewProps } from './room-list.types'
 
-export function RoomList() {
-  const { data, isLoading, error } = useRooms()
-
+export function RoomListView({ data, isLoading, error }: RoomListViewProps) {
   if (error) {
     return (
       <Card>
