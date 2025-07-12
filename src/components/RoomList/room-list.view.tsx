@@ -16,9 +16,7 @@ export function RoomListView({ data, isLoading, error }: RoomListViewProps) {
     return (
       <Card>
         <CardContent>
-          <p className="text-red-500">
-            Erro ao carregar as salas. {error.message}
-          </p>
+          <p className="text-red-500">{error.message}</p>
         </CardContent>
       </Card>
     )

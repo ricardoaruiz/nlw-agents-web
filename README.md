@@ -57,6 +57,23 @@ O **NLW-Agents** é uma aplicação web construída com React, focada em organiz
    npm run preview
    ```
 
+## Extensões Recomendadas do VS Code
+
+Este projeto inclui uma lista de extensões recomendadas para o VS Code que melhoram significativamente a experiência de desenvolvimento.
+
+### 📦 **Instalação Automática**
+Quando você abrir o projeto no VS Code, aparecerá uma notificação para instalar as extensões recomendadas. Clique em **"Install All"** para instalar todas de uma vez.
+
+### 📋 **Lista Completa**
+Para ver a lista completa de extensões recomendadas e suas descrições, consulte: [**`.vscode/extensions.md`**](.vscode/extensions.md)
+
+### 🔧 **Principais Extensões**
+- **Biome** - Formatação e linting unificado
+- **Tailwind CSS IntelliSense** - Autocomplete para Tailwind
+- **ES7+ React Snippets** - Snippets úteis para React
+- **GitLens** - Recursos avançados do Git
+- **Error Lens** - Visualização inline de erros
+
 ## Configurações
 
 - **TypeScript**: Configurações estritas e paths customizados em `tsconfig.json` e `tsconfig.app.json`.

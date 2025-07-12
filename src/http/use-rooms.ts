@@ -10,9 +10,17 @@ export const useRooms = ({ delay }: { delay?: number } = {}) => {
       }
 
       const response = await fetch('http://localhost:3333/rooms')
+
+      if (!response.ok) {
+        throw new Error(
+          'Ocorreu um erro ao recuperar as salas! Por favor, tente novamente mais tarde.'
+        )
+      }
+
       const rooms: GetRoomsResponse = await response.json()
       return rooms
     },
+    retry: 0,
     staleTime: 1000 * 60 * 5, // 5 minutes
   })
 }

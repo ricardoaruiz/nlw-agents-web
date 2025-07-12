@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { SplineIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4'
 import { Button } from '../ui/button'
@@ -19,6 +20,7 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
+import type { CreateRoomFormViewProps } from './create-room-form.types'
 
 const createRoomFormSchema = z.object({
   name: z.string().min(3, 'Informe nome da sala com no mínimo 3 caracteres'),
@@ -27,7 +29,11 @@ const createRoomFormSchema = z.object({
 
 type CreateRoomFormData = z.infer<typeof createRoomFormSchema>
 
-export function CreateRoomFormView() {
+export function CreateRoomFormView({
+  createRoom,
+  isLoading,
+  error,
+}: CreateRoomFormViewProps) {
   const createRoomForm = useForm<CreateRoomFormData>({
     resolver: zodResolver(createRoomFormSchema),
     defaultValues: {
@@ -36,9 +42,9 @@ export function CreateRoomFormView() {
     },
   })
 
-  function handleCreateRoom(data: CreateRoomFormData) {
-    // biome-ignore lint/suspicious/noConsole: will be removed in production
-    console.log('Creating room with data:', data)
+  async function handleCreateRoom({ name, description }: CreateRoomFormData) {
+    await createRoom({ name, description })
+    createRoomForm.reset()
   }
 
   return (
@@ -83,10 +89,19 @@ export function CreateRoomFormView() {
               )}
             />
 
-            <Button className="w-full" type="submit">
+            <Button className="w-full" disabled={isLoading} type="submit">
               Criar sala
+              {isLoading && (
+                <span className="ml-2 animate-spin">
+                  <SplineIcon />
+                </span>
+              )}
             </Button>
           </form>
+
+          <FormMessage className="mt-2 text-red-500">
+            {error ? error.message : ''}
+          </FormMessage>
         </Form>
       </CardContent>
     </Card>

@@ -1,0 +1,28 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "editorconfig.editorconfig",
+    "dsznajder.es7-react-js-snippets",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "vincaslt.highlight-matching-tag",
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "donjayamanne.githistory",
+    "waderyan.gitblame",
+    "christian-kohler.path-intellisense",
+    "pkief.material-icon-theme",
+    "usernamehw.errorlens",
+    "gruntfuggly.todo-tree",
+    "pranaygp.vscode-css-peek",
+    "styled-components.vscode-styled-components",
+    "ritwickdey.liveserver",
+    "naumovs.color-highlight",
+    "chakrounanas.turbo-console-log",
+    "meganrogge.template-string-converter",
+    "github.copilot",
+    "github.copilot-chat",
+    "wallabyjs.console-ninja",
+    "ms-vscode.vscode-json"
+  ]
+}
