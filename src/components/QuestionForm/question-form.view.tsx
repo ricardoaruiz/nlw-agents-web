@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import type { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -19,11 +20,15 @@ import {
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { createQuestionSchema } from './question-form.schema'
-import type { QuestionFormProps } from './question-form.types'
+import type { QuestionFormViewProps } from './question-form.types'
 
 type CreateQuestionFormData = z.infer<typeof createQuestionSchema>
 
-export function QuestionFormView({ roomId }: QuestionFormProps) {
+export function QuestionFormView({
+  createQuestion,
+  isLoading,
+  error,
+}: QuestionFormViewProps) {
   const form = useForm<CreateQuestionFormData>({
     resolver: zodResolver(createQuestionSchema),
     defaultValues: {
@@ -31,9 +36,14 @@ export function QuestionFormView({ roomId }: QuestionFormProps) {
     },
   })
 
-  function handleCreateQuestion(data: CreateQuestionFormData) {
-    // biome-ignore lint/suspicious/noConsole: dev
-    console.log(data, roomId)
+  async function handleCreateQuestion({ question }: CreateQuestionFormData) {
+    await createQuestion({ question })
+    form.reset()
+  }
+
+  if (error) {
+    // TODO handle error properly
+    alert('Erro ao criar a pergunta')
   }
 
   return (
@@ -68,7 +78,10 @@ export function QuestionFormView({ roomId }: QuestionFormProps) {
               )}
             />
 
-            <Button type="submit">Enviar pergunta</Button>
+            <Button disabled={isLoading} type="submit">
+              Enviar pergunta
+              {isLoading && <Loader2 className="size-4 animate-spin" />}
+            </Button>
           </form>
         </Form>
       </CardContent>
