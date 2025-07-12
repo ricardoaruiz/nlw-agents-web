@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SplineIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod/v4'
+import type { z } from 'zod/v4'
 import { Button } from '../ui/button'
 import {
   Card,
@@ -20,12 +20,8 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
+import { createRoomFormSchema } from './create-room.schema'
 import type { CreateRoomFormViewProps } from './create-room-form.types'
-
-const createRoomFormSchema = z.object({
-  name: z.string().min(3, 'Informe nome da sala com no mínimo 3 caracteres'),
-  description: z.string().optional(),
-})
 
 type CreateRoomFormData = z.infer<typeof createRoomFormSchema>
 
