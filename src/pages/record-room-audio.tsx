@@ -38,6 +38,10 @@ export function RecordRoomAudioPage() {
    */
   const uploadAudio = useCallback(
     async (audio: Blob) => {
+      if (!audio.size) {
+        return
+      }
+
       const formData = new FormData()
       formData.append('file', audio, 'audio.webm')
 
@@ -46,9 +50,6 @@ export function RecordRoomAudioPage() {
         {
           method: 'POST',
           body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
         }
       )
 
@@ -76,11 +77,7 @@ export function RecordRoomAudioPage() {
       audioBitsPerSecond: 64_000,
     })
 
-    recorder.current.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        uploadAudio(event.data)
-      }
-    }
+    recorder.current.ondataavailable = (event) => uploadAudio(event.data)
 
     recorder.current.onstart = () => {
       console.log('Gravação iniciada')
@@ -129,6 +126,7 @@ export function RecordRoomAudioPage() {
     return () => {
       if (recorder.current) {
         console.log('Limpando o gravador')
+        recorder.current.stop()
         recorder.current = null
       }
     }
