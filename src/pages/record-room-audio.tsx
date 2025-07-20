@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { env } from '@/env'
 
 type RecordRoomAudioParams = {
   roomId: string
@@ -46,7 +47,7 @@ export function RecordRoomAudioPage() {
       formData.append('file', audio, 'audio.webm')
 
       const response = await fetch(
-        `http://localhost:3333/rooms/${params.roomId}/audio`,
+        `${env.VITE_API_URL}/rooms/${params.roomId}/audio`,
         {
           method: 'POST',
           body: formData,

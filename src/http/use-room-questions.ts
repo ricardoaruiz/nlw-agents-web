@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { env } from '@/env'
 import type { GetRoomQuestionsRequest } from './types/get-room-questions-request'
 import type { GetRoomQuestionsResponse } from './types/get-room-questions-response'
 
@@ -17,7 +18,7 @@ export function useRoomQuestions({ roomId, delay }: GetRoomQuestionsRequest) {
       }
 
       const response = await fetch(
-        `http://localhost:3333/rooms/${roomId}/questions`
+        `${env.VITE_API_URL}/rooms/${roomId}/questions`
       )
 
       if (!response.ok) {
