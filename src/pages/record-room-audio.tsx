@@ -27,6 +27,7 @@ const isRecordingSupported =
  */
 export function RecordRoomAudioPage() {
   const params = useParams<RecordRoomAudioParams>()
+  const recordInterval = useRef<NodeJS.Timeout | null>(null)
   const recorder = useRef<MediaRecorder | null>(null)
   const [isRecording, setIsRecording] = useState(false)
 
@@ -62,9 +63,42 @@ export function RecordRoomAudioPage() {
 
   /**
    * Creates a MediaRecorder instance to record audio from the user's microphone.
-   * It sets up the MediaRecorder with specific audio constraints and event handlers.
+   * It sets up the MediaRecorder with specific audio constraints and event handlers
+   * and calling the start method on the MediaRecorder instance.
    */
-  const createRecorder = useCallback(async () => {
+  const createRecorder = useCallback(
+    (audio: MediaStream) => {
+      recorder.current = new MediaRecorder(audio, {
+        mimeType: 'audio/webm',
+        audioBitsPerSecond: 64_000,
+      })
+
+      recorder.current.ondataavailable = (event) => uploadAudio(event.data)
+
+      recorder.current.onstart = () => {
+        console.log('Gravação iniciada')
+      }
+
+      recorder.current.onstop = () => {
+        console.log('Gravação parada')
+      }
+
+      recorder.current.start()
+    },
+    [uploadAudio]
+  )
+
+  /**
+   * Starts the audio recording by setting the isRecording state to true
+   */
+  async function startRecording() {
+    if (!isRecordingSupported) {
+      alert('Gravação de áudio não é suportada neste navegador.')
+      return
+    }
+
+    setIsRecording(true)
+
     const audio = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
@@ -73,32 +107,13 @@ export function RecordRoomAudioPage() {
       },
     })
 
-    recorder.current = new MediaRecorder(audio, {
-      mimeType: 'audio/webm',
-      audioBitsPerSecond: 64_000,
-    })
+    createRecorder(audio)
 
-    recorder.current.ondataavailable = (event) => uploadAudio(event.data)
+    recordInterval.current = setInterval(() => {
+      recorder.current?.stop()
 
-    recorder.current.onstart = () => {
-      console.log('Gravação iniciada')
-    }
-
-    recorder.current.onstop = () => {
-      console.log('Gravação parada')
-    }
-  }, [uploadAudio])
-
-  /**
-   * Starts the audio recording by setting the isRecording state to true
-   * and calling the start method on the MediaRecorder instance.
-   */
-  function startRecording() {
-    setIsRecording(true)
-
-    if (recorder.current) {
-      recorder.current.start()
-    }
+      createRecorder(audio)
+    }, 5000)
   }
 
   /**
@@ -111,27 +126,29 @@ export function RecordRoomAudioPage() {
     if (recorder.current && recorder.current.state !== 'inactive') {
       recorder.current.stop()
     }
+
+    if (recordInterval.current) {
+      clearInterval(recordInterval.current)
+      recordInterval.current = null
+    }
   }
 
   /**
-   * Effect to create the MediaRecorder when the component mounts.
-   * It also cleans up the recorder when the component unmounts.
+   * Cleans up the MediaRecorder instance and the recording interval
+   * when the component is unmounted or when the recording is stopped.
    */
   useEffect(() => {
-    if (!isRecordingSupported) {
-      alert('Gravação de áudio não é suportada neste navegador.')
-      return
-    }
-    createRecorder()
-
     return () => {
       if (recorder.current) {
-        console.log('Limpando o gravador')
         recorder.current.stop()
         recorder.current = null
       }
+      if (recordInterval.current) {
+        clearInterval(recordInterval.current)
+        recordInterval.current = null
+      }
     }
-  }, [createRecorder])
+  }, [])
 
   if (!params.roomId) {
     return <Navigate replace to="/" />
