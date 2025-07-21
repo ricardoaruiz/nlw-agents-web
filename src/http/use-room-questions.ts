@@ -28,6 +28,6 @@ export function useRoomQuestions({ roomId, delay }: GetRoomQuestionsRequest) {
       const questions: GetRoomQuestionsResponse = await response.json()
       return questions
     },
-    staleTime: 1000 * 60 * 1, // 1 minutes
+    refetchOnWindowFocus: true,
   })
 }
