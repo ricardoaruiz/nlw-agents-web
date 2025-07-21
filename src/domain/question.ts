@@ -3,4 +3,5 @@ export type Question = {
   question: string
   answer?: string | null
   createdAt: string
+  isGeneratingAnswer?: boolean
 }

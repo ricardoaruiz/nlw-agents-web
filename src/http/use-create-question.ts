@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { env } from '@/env'
 import type { CreateQuestionRequest } from './types/create-question-request'
+import type { CreateQuestionResponse } from './types/create-question-response'
 import type { GetRoomQuestionsResponse } from './types/get-room-questions-response'
 import { GET_ROOM_QUESTIONS_QUERY_KEY } from './use-room-questions'
 
@@ -35,14 +36,61 @@ export function useCreateQuestion({
         throw new Error('Ocorreu um erro ao criar a pergunta')
       }
 
-      const createdQuestion: GetRoomQuestionsResponse = await response.json()
+      const createdQuestion: CreateQuestionResponse = await response.json()
 
       return createdQuestion
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [GET_ROOM_QUESTIONS_QUERY_KEY, roomId],
-      })
+    onMutate: ({ question }) => {
+      const questions = queryClient.getQueryData<GetRoomQuestionsResponse>([
+        GET_ROOM_QUESTIONS_QUERY_KEY,
+        roomId,
+      ])
+
+      const questionsArray = questions?.length ? questions : []
+      const newQuestion = {
+        id: crypto.randomUUID(),
+        question,
+        answer: null,
+        createdAt: new Date().toISOString(),
+        isGeneratingAnswer: true,
+      }
+
+      queryClient.setQueryData<GetRoomQuestionsResponse>(
+        [GET_ROOM_QUESTIONS_QUERY_KEY, roomId],
+        [newQuestion, ...questionsArray]
+      )
+
+      return { newQuestion, questions }
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.questions) {
+        queryClient.setQueryData<GetRoomQuestionsResponse>(
+          [GET_ROOM_QUESTIONS_QUERY_KEY, roomId],
+          context.questions
+        )
+      }
+    },
+    onSuccess: (data, _variables, context) => {
+      queryClient.setQueryData<GetRoomQuestionsResponse>(
+        [GET_ROOM_QUESTIONS_QUERY_KEY, roomId],
+        (oldQuestions) => {
+          if (!(oldQuestions && context.newQuestion)) {
+            return oldQuestions
+          }
+
+          return oldQuestions.map((question) => {
+            if (question.id === context.newQuestion.id) {
+              return {
+                ...context.newQuestion,
+                id: data.questionId,
+                answer: data.answer,
+                isGeneratingAnswer: false,
+              }
+            }
+            return question
+          })
+        }
+      )
     },
   })
 }
